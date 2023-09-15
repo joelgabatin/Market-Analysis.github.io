@@ -1,0 +1,136 @@
+{% extends "base.html" %}
+
+{% block title %} Descriptive Analysis {% endblock %}
+
+{% block content %}
+
+<section class="content">
+    <div class="container-fluid">
+        <div class="row">
+
+            <div class="col-12 mt-3">
+              <h2>Customer Spending Prediction</h2>
+            </div>
+            <div class="col-12">
+                <!-- Form -->
+                <div class="container">
+                  <form action="{{url_for('predict')}}" method="POST">
+                    <fieldset>
+                  <br>
+                    {{  features }}
+                    <div class="form-group">
+                      <!--Gender-->
+                      <label for="gender">Gender</label>
+                      <select class="form-control" id="gender" name="gender" required>
+                        <option disabled selected value>-- Select an Option --</option>
+                            <option value="0" {%  if gender == 0 %} selected {% endif %}>Female</option>
+                            <option value="1" {%  if gender == 1 %} selected {% endif %}>Male
+                      </select>
+                    </div>
+                    <!--Age-->
+                    <div class="form-group">
+                      <label for="age">Age</label>
+                      <input type="number" class="form-control" id="age" name="age" placeholder = "Age" value="{{ age }}" required />
+                    </div>
+                    <!--Category-->
+                    <div class="form-group">
+                      <label for="category">Category</label>
+                      <select class="form-control" id="category" name="category" required>
+                        <option disabled selected value>-- Select an Option --</option>
+
+                        <option value="0" {%  if category == 0 %} selected {% endif %}>Books</option>
+                        <option value="1" {%  if category == 1 %} selected {% endif %}>Clothing</option>
+                        <option value="2" {%  if category == 2 %} selected {% endif %}>Cosmetics</option>
+                        <option value="3" {%  if category == 3 %} selected {% endif %}>Food and Beverage</option>
+                        <option value="4" {%  if category == 4 %} selected {% endif %}>Shoes</option>
+                        <option value="5" {%  if category == 5 %} selected {% endif %}>Souvenir</option>
+                        <option value="6" {%  if category == 6 %} selected {% endif %}>Technology</option>
+                        <option value="7" {%  if category == 7 %} selected {% endif %}>Toys</option>
+                      </select>
+                    </div>
+                    <!--Quantity-->
+                    <div class="form-group">
+                      <label for="quantity">Quantity of buying</label>
+                      <input type="number" class="form-control" id="quantity" name="quantity" placeholder = "Quantity" value="{{ quantity }}" required />
+                    </div>
+                    <!--Payment Method-->
+                    <div class="form-group">
+                      <label for="payment_method">Payment Method</label>
+                      <select class="form-control" id="payment_method" name="payment_method" required>
+                        <option disabled selected value>-- Select an Option --</option>
+
+                        <option value="0" {%  if payment_method == 0 %} selected {% endif %}>Cash</option>
+                        <option value="1" {%  if payment_method == 1 %} selected {% endif %}>Credit Card</option>
+                        <option value="2" {%  if payment_method == 2 %} selected {% endif %}>Debit Card</option>
+                      </select>
+                    </div>
+                    <!--Shopping Mall-->
+                    <div class="form-group">
+                        <label for="shopping_mall">Shopping Mall</label>
+                        <select class="form-control" id="shopping_mall"  name="shopping_mall" required>
+                                  <option disabled selected value>-- Select an Option --</option>
+                                  <option value="0"  {%  if shopping_mall == 0 %} selected {% endif %}>Cevahir AVM</option>
+                                  <option value="1"  {%  if shopping_mall == 1 %} selected {% endif %}>Emaar Square Mall</option>
+                                  <option value="2"  {%  if shopping_mall == 2 %} selected {% endif %}>Forum Istanbul</option>
+                                  <option value="3"  {%  if shopping_mall == 3 %} selected {% endif %}>Istinye Park</option>
+                                  <option value="4"  {%  if shopping_mall == 4 %} selected {% endif %}>Kanyon</option>
+                                  <option value="5"  {%  if shopping_mall == 5 %} selected {% endif %}>Mall of Istanbul</option>
+                                  <option value="6"  {%  if shopping_mall == 6 %} selected {% endif %}>Metrocity</option>
+                                  <option value="7"  {%  if shopping_mall == 7 %} selected {% endif %}>Metropol AVM</option>
+                                  <option value="8"  {%  if shopping_mall == 8 %} selected {% endif %}>Viaport Outlet</option>
+                                  <option value="9"  {%  if shopping_mall == 9 %} selected {% endif %}>Zorlu Center</option>
+                        </select>
+                      </div>
+
+                    <!--Month-->
+                    <div class="form-group">
+                        <label for="month">Month</label>
+                        <select class="form-control" id="month" name="month" required>
+                          <option disabled selected>-- Select an Option --</option>
+                          <option value="1" {%  if month == 1 %} selected {% endif %}>January</option>
+                          <option value="2" {%  if month == 2 %} selected {% endif %}>February</option>
+                          <option value="3" {%  if month == 3 %} selected {% endif %}>March</option>
+                          <option value="4" {%  if month == 4 %} selected {% endif %}>April</option>
+                          <option value="5" {%  if month == 5 %} selected {% endif %}>May</option>
+                          <option value="6" {%  if month == 6 %} selected {% endif %}>June</option>
+                          <option value="7" {%  if month == 7 %} selected {% endif %}>July</option>
+                          <option value="8" {%  if month == 8 %} selected {% endif %}>August</option>
+                          <option value="9" {%  if month == 9 %} selected {% endif %}>September</option>
+                          <option value="10" {%  if month == 10 %} selected {% endif %}>October</option>
+                          <option value="11" {%  if month == 11 %} selected {% endif %}>November</option>
+                          <option value="12" {%  if month == 12 %} selected {% endif %}>December</option>
+                        </select>
+                      </div>
+
+                    <!--Year-->
+                    <div class="form-group">
+                        <label for="year">Year</label>
+                        <select class="form-control" id="year" name="year" required>
+                          <option disabled selected value>-- Select an Option --</option>
+                          <option value="2021" {%  if year == 2021 %} selected {% endif %}>2021</option>
+                          <option value="2022" {%  if year == 2022 %} selected {% endif %}>2022</option>
+                          <option value="2023" {%  if year == 2023 %} selected {% endif %}>2023</option>
+                        </select>
+                      </div>
+
+                      <br/>
+
+                      <!--Prediction Result-->
+                      <!-- Button trigger modal -->
+                      <div class="form-group">
+                <input class="btn btn-outline-dark" type="submit" value="Check probable spending"/>
+              </div>
+            <br>
+            <div class="form-group" id="result">
+            <h5>  Customer is 92% likely to spend the amount: <span class="text-blue"><b>{{result}} </b></span></h5> </div>
+
+                    </fieldset>
+                  </form>
+                </div>
+
+            </div>
+        </div>
+    </div>
+</section>
+
+{% endblock %}

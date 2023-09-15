@@ -1,0 +1,53 @@
+{% extends "base.html" %}
+
+{% block content %}
+<section class="content">
+  <div class="container-fluid">
+    <div class="row">
+        <div class="col-12 mt-3 mb-3">
+          <h2>Sales Age Prediction</h2>
+        </div>
+        <div class="col-12">
+            <form method="POST" action="/sales-age-prediction" class="w-50 ml-1">
+                <label for="age_range">Age Range:</label>
+                <input type="text" id="age_range" name="age_range" placeholder="enter age range" class="w-50 mb-3" value="{{ age_range }}" required>
+                <input type="submit" value="Predict"><br>
+                <span><b class="text-danger">note:</b> please enter age range for e.g  <b>(20-30)</b></span>
+            </form>
+        </div>
+        <div class="col-12 mt-3">
+            {% if error_message %}
+                <h5 class="text-danger">{{ error_message }}</h5>
+            {% elif average_spending %}
+
+                <h5>Average Predicted Spending: <span class="text-bold text-blue">₺ {{ average_spending }}</span></h5><br>
+                <h5 class="mb-3">Predicted Spending per Category:</h5>
+
+                <table id="example1" class="table table-bordered table-striped">
+                    <thead>
+                        <tr>
+                            <th>Category</th>
+                            <th>Average Spending</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                         {% for category, spending in predicted_spending_per_category.items() %}
+                        <tr>
+                                <td class="text-bold">{{ category }}</td>
+                                <td class="text-bold text-blue">₺ {{ spending }}</td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+
+            {% else %}
+                {% if message %}
+                    <p class="text-danger">{{ message }}</p>
+                {% endif %}
+            {% endif %}
+        </div>
+    </div>
+  </div>
+</section>
+
+{% endblock %}

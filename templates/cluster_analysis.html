@@ -1,0 +1,45 @@
+{% extends "base.html" %}
+
+{% block content %}
+<section class="content">
+  <div class="container-fluid">
+    <div class="row">
+        <div class="col-12 mt-3 mb-3">
+          <h2>Clustering Analysis</h2>
+        </div>
+        <div class="col-12">
+                <table id="example1" class="table table-bordered table-striped">
+                    <thead>
+                        <tr>
+                            <th>Cluster</th>
+                            <th>Category</th>
+                            <th>Average Quantity</th>
+                            <th>Average Price</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for cluster, characteristics in cluster_stats.items() %}
+                        <tr>
+                            <td>{{ cluster }}</td>
+                            <td>{{ characteristics['category'] }}</td>
+                            <td>{{ characteristics['quantity']|round(2) }}</td>
+                            <td>{{ characteristics['price']|round(2) }}</td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+        </div>
+    </div>
+  </div>
+</section>
+{% endblock %}
+
+{% block add_script %}
+<script>
+$(document).ready(function() {
+  $('#select_cluster').change(function() {
+    $('form').submit();
+  });
+});
+</script>
+{% endblock %}

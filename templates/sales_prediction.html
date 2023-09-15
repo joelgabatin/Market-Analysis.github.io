@@ -1,0 +1,157 @@
+{% extends "base.html" %}
+
+{% block content %}
+
+<section class="content">
+  <div class="container-fluid">
+        <div class="row mb-3">
+            <div class="col-lg-12">
+                <h2>Sales Prediction</h2>
+                <form method="post" action="{{url_for('sales_prediction')}}" id="predict_method">
+                    <div class="row">
+                      <div class="form-group col-3">
+                        <label for="selected_mall">Select Mall:</label>
+                        <select class="form-control" id="selected_mall" name="selected_mall">
+                          <option value="Kanyon" {% if selected_mall=="Kanyon": %} selected {% endif %}>Kanyon</option>
+                          <option value="Mall of Istanbul" {% if selected_mall=="Mall of Istanbul": %} selected {% endif %}>Mall of Istanbul</option>
+                          <option value="Metrocity" {% if selected_mall=="Metrocity": %} selected {% endif %}>Metrocity</option>
+                          <option value="Metropol AVM" {% if selected_mall=="Metropol AVM": %} selected {% endif %}>Metropol AVM</option>
+                          <option value="Viaport Outlet" {% if selected_mall=="Viaport Outlet": %} selected {% endif %}>Viaport Outlet</option>
+                          <option value="Zorlu Center" {% if selected_mall=="Zorlu Center": %} selected {% endif %}>Zorlu Center</option>
+                          <option value="Cevahir AVM" {% if selected_mall=="Cevahir AVM": %} selected {% endif %}>Cevahir AVM</option>
+                          <option value="Emaar Square Mall" {% if selected_mall=="Emaar Square Mall": %} selected {% endif %}>Emaar Square Mall</option>
+                          <option value="Forum Istanbul" {% if selected_mall=="Forum Istanbul": %} selected {% endif %}>Forum Istanbul</option>
+                          <option value="Istinye Park" {% if selected_mall=="Istinye Park": %} selected {% endif %}>Istinye Park</option>
+                        </select>
+                      </div>
+
+                      <div class="form-group col-3">
+                        <label for="prediction_method">Prediction Method:</label>
+                        <select class="form-control" id="prediction_method" name="prediction_method">
+                          <option value="num_months" {% if(prediction_method == "num_months") %} selected {% endif %}>By Number of Months</option>
+                          <option value="specific_month_year"  {% if(prediction_method == "specific_month_year") %} selected {% endif %}>By Specific Month and Year</option>
+                        </select>
+                      </div>
+
+                      <!-- Input field for the number of months -->
+                      <div id="num_months_input" class="col-3" style="display: none;">
+                        <div class="form-group">
+                          <label for="num_months">Number of Months to Predict:</label>
+                          <input type="number" class="form-control" id="num_months" name="num_months" placeholder="eg. 2" value="{{num_months}}">
+                        </div>
+                      </div>
+
+                      <!-- Input fields for specific month and year -->
+
+                        <div class="form-group col-3" id="specific_month_input_tag" style="display: none;">
+                          <label for="specific_month">Specific Month:</label>
+                          <select class="form-control" name="specific_month" id="specific_month">
+                            <option value="">Select</option>
+                            <option value="January" {% if specific_month =="January" %} selected {% endif %}>January</option>
+                            <option value="February" {% if specific_month =="February" %} selected {% endif %}>February</option>
+                            <option value="March" {% if specific_month =="March" %} selected {% endif %}>March</option>
+                            <option value="April" {% if specific_month =="April" %} selected {% endif %}>April</option>
+                            <option value="May" {% if specific_month =="May" %} selected {% endif %}>May</option>
+                            <option value="June" {% if specific_month =="June" %} selected {% endif %}>June</option>
+                            <option value="July" {% if specific_month =="July" %} selected {% endif %}>July</option>
+                            <option value="August" {% if specific_month =="August" %} selected {% endif %}>August</option>
+                            <option value="September" {% if specific_month =="September" %} selected {% endif %}>September</option>
+                            <option value="October" {% if specific_month =="October" %} selected {% endif %}>October</option>
+                            <option value="November" {% if specific_month =="November" %} selected {% endif %}>November</option>
+                            <option value="December" {% if specific_month =="December" %} selected {% endif %}>December</option>
+                          </select>
+                        </div>
+
+
+                        <div class="form-group col-3" id="specific_year_input_tag" style="display: none;">
+                          <label for="specific_year">Specific Year:</label>
+                          <input type="number" class="form-control" name="specific_year" id="specific_year" value="{{specific_year}}" placeholder="eg. 2023">
+                        </div>
+
+                    </div>
+
+                    <div class="row">
+                        <div class="col-6">
+                            <button type="submit" class="btn btn-primary">Predict</button>
+                        </div>
+                        <div id="num_months_note" class="col-6">
+                            <p class="m-0"><b class=" text-blue">note:</b> Number of Months to Predict should not less than 1</p>
+                        </div>
+                        <div id="specific_month_year_note" class="col-6" style="display: none;">
+                            <p class="m-0"><b class=" text-blue">note:</b> Please enter value for Specific Month and Year</p>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </div>
+
+    {% if error == "yes" %}
+        <div class="row"><h4 class="text-danger ml-3 mt-5">Error! Number of Months to Predict should not less than 1</h4></div>
+    {% elif error == "specific_monthyear_error" %}
+        <div class="row"><h4 class="text-danger ml-3 mt-5">Note: Start From April 2023 onwards</h4></div>
+    {% else: %}
+        <div class="row">
+            <div class="col-12">
+                <div id="sales_plot">
+                  {{ plot_html|safe }}
+                </div>
+            </div>
+        </div>
+    {% endif%}
+
+      <div class="mt-4">
+          <pre>{{ predicted_sales_text }}</pre>
+      </div>
+
+
+  </div>
+</section>
+{% endblock %}
+
+
+{% block add_script%}
+
+<script>
+  $(document).ready(function() {
+
+    var selectedValue = $('#prediction_method').val();
+    console.log("Selected value: " + selectedValue);
+    if (selectedValue == 'num_months'){
+        $('#num_months_input').show();
+        $('#num_months_note').show();
+    }
+    else {
+        $('#specific_month_year_note').show();
+        $('#specific_month_input_tag').show();
+        $('#specific_year_input_tag').show();
+    }
+
+    $('#prediction_method').on('change', function() {
+      var method = $(this).val();
+      var numMonthsInput = $('#num_months_input');
+      var specificYearInput = $('#specific_year_input_tag');
+      var specificMonthInput = $('#specific_month_input_tag');
+
+      if (method === 'num_months') {
+        numMonthsInput.css('display', 'block');
+        specificYearInput.css('display', 'none');
+        specificMonthInput.css('display', 'none');
+        $('#specific_month_year_note').hide();
+        $('#num_months_note').show();
+      }
+      else if (method === 'specific_month_year') {
+        numMonthsInput.css('display', 'none');
+        specificYearInput.css('display', 'block');
+        specificMonthInput.css('display', 'block');
+        $('#specific_month_year_note').show();
+        $('#num_months_note').hide();
+      }
+    });
+
+    // Initial state on page load
+    $('#prediction_method').trigger('change');
+  });
+</script>
+
+
+{% endblock %}

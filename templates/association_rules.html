@@ -1,0 +1,61 @@
+{% extends "base.html" %}
+
+{% block content %}
+<section class="content">
+  <div class="container-fluid">
+    <div class="row">
+        <div class="col-12 mt-3">
+          <h2>Association Rule Mining</h2>
+        </div>
+        <div class="col-12">
+            <table id="example2" class="table table-bordered table-striped">
+                <thead>
+                    <tr>
+                        <th>Customers who buy:</th>
+                        <th>Will likely buy:</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for result in results %}
+                    <tr>
+                        <td>{{ result[0]|join(', ') }}</td>
+                        <td>
+                            {% set consequents = result[1] %}
+                            {% if consequents|length > 10 %}
+                                {{ consequents[:10]|join(', ') }} <br>
+                                <small>(Showing 10 out of {{ consequents|length }})</small>
+                            {% else %}
+                                {{ consequents|join(', ') }}
+                            {% endif %}
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+  </div>
+</section>
+{% endblock %}
+
+{% block add_script%}
+<script>
+
+    $(function () {
+    $("#example2").DataTable({
+      "responsive": true, "lengthChange": false, "autoWidth": false,
+      "columnDefs": [{
+      "target": [0],
+      "searchable": true,
+      "orderable": true,
+    }],
+      "buttons": ["copy", "csv", "excel", "pdf", "print", "colvis"]
+    }).buttons().container().appendTo('#example1_wrapper .col-md-6:eq(0)');
+  });
+
+
+
+
+</script>
+
+{% endblock %}
